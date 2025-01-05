@@ -3,16 +3,11 @@ import RecipeService from "../services/recipeService";
 
 class RecipeController {
   static async create(req: Request, res: Response, next: NextFunction) {
-    try {
-      const {
-        name,
-        ingredients,
-        instructions,
-        imageUrl,
-        cookingTime,
-        createdBy,
-      } = req.body;
+    const createdBy = req.user?.userId || "";
+    
+    const { name, ingredients, instructions, imageUrl, cookingTime } = req.body;
 
+    try {
       const recipe = await RecipeService.create({
         name,
         ingredients,
@@ -69,20 +64,22 @@ class RecipeController {
         createdBy,
       } = req.body;
 
-      const recipe = await RecipeService.update({
-        name,
-        ingredients,
-        instructions,
-        imageUrl,
-        cookingTime,
-        createdBy,
-      }, id);
+      const recipe = await RecipeService.update(
+        {
+          name,
+          ingredients,
+          instructions,
+          imageUrl,
+          cookingTime,
+          createdBy,
+        },
+        id
+      );
 
       res.status(200).json({
         message: "update recipe successfully",
         data: recipe,
       });
-
     } catch (error) {
       next(error);
     }

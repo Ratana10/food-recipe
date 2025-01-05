@@ -1,3 +1,5 @@
+import AppError from "../config/appError";
+import NotFound from "../config/notFound";
 import User from "../models/user";
 import { ILogin, IRegister } from "../types";
 import bcrypt from "bcrypt";
@@ -9,13 +11,13 @@ class AuthService {
 
     if (!user) {
       // Not found
-      return;
+      throw new NotFound("User not found");
     }
 
     const isPasswordValid = await bcrypt.compare(data.password, user.password!);
     if (!isPasswordValid) {
       // Invalid credential
-      return;
+      throw new AppError("Invalid email or password", 401);
     }
 
     // Generate Token
@@ -28,7 +30,6 @@ class AuthService {
       "JWT_SECRET",
       { expiresIn: "1d" }
     );
-    console.log("🚀 ~ AuthService ~ login ~ token:", token)
 
     return token;
   }
