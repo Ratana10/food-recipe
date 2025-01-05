@@ -9,4 +9,6 @@ router.get("/",  RecipeController.getAll);
 
 router.get("/:id",  RecipeController.findById);
 
+router.put("/:id",  RecipeController.update);
+
 export default router;

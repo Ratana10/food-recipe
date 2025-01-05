@@ -56,6 +56,37 @@ class RecipeController {
       next(error);
     }
   }
+
+  static async update(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const {
+        name,
+        ingredients,
+        instructions,
+        imageUrl,
+        cookingTime,
+        createdBy,
+      } = req.body;
+
+      const recipe = await RecipeService.update({
+        name,
+        ingredients,
+        instructions,
+        imageUrl,
+        cookingTime,
+        createdBy,
+      }, id);
+
+      res.status(200).json({
+        message: "update recipe successfully",
+        data: recipe,
+      });
+
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default RecipeController;

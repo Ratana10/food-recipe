@@ -31,6 +31,8 @@ class RecipeService {
   }
 
   static async update(data: IRecipe, id: string) {
+    await this.findById(id);
+
     const recipe = Recipe.findByIdAndUpdate(id, data, {
       new: true,
     });
