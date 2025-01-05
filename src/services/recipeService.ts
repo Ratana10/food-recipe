@@ -1,3 +1,4 @@
+import NotFound from "../config/notFound";
 import Recipe from "../models/recipe";
 import { IRecipe } from "../types";
 class RecipeService {
@@ -22,7 +23,18 @@ class RecipeService {
   }
 
   static async findById(id: string) {
-    const recipe = Recipe.findById(id);
+    const recipe = await Recipe.findById(id);
+    if (!recipe) {
+      throw new NotFound("Receipt not found");
+    }
+    return recipe;
+  }
+
+  static async update(data: IRecipe, id: string) {
+    const recipe = Recipe.findByIdAndUpdate(id, data, {
+      new: true,
+    });
+
     return recipe;
   }
 }

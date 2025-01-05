@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 import bodyParser from "body-parser";
 import router from "./routers";
+import errorHandler from "./middlewares/errorHandler";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -16,6 +17,11 @@ mongoose
 app.use(bodyParser.json());
 
 app.use("/", router);
+
+
+// Global error handler
+app.use(errorHandler);
+
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
