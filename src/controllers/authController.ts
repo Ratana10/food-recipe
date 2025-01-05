@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import AuthService from "../services/authService";
+import UserService from "../services/userService";
 
 class AuthController {
   static async login(req: Request, res: Response, next: NextFunction) {
@@ -16,7 +17,18 @@ class AuthController {
   }
 
   static async register(req: Request, res: Response, next: NextFunction) {
+    const { email, password, name } = req.body;
+
     try {
+      const { user, token } = await UserService.create({
+        email,
+        password,
+        name,
+      });
+      res.status(201).json({
+        message: "user created",
+        accessToken: token,
+      });
     } catch (error) {
       next(error);
     }

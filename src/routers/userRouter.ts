@@ -1,11 +1,15 @@
-import express, { Request, Response } from "express";
-import User from "../models/user";
-import { createUser, getAllUser } from "../controllers/userController";
+import express from "express";
+import UserController from "../controllers/userController";
+import authenticate from "../middlewares/authenticate";
 
 const router = express.Router();
 
-router.post("/", createUser);
+router.use(authenticate);
 
-router.get("/", getAllUser);
+router.post("/", UserController.create);
+
+router.get("/", UserController.findAll);
+
+router.get("/:id", UserController.findById);
 
 export default router;

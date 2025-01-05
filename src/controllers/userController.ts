@@ -1,39 +1,44 @@
-import { Request, Response } from "express";
-import User from "../models/user";
-import bcrypt from 'bcrypt';
+import { NextFunction, Request, Response } from "express";
+import UserService from "../services/userService";
 
-const createUser = async (req: Request, res: Response) => {
-  const {password, ...data} = req.body
+class UserController {
+  static async create(req: Request, res: Response, next: NextFunction) {
+    const { email, password, name } = req.body;
+    try {
+      const user = await UserService.create({ email, password, name });
+      res.status(201).json({
+        message: "user created",
+        data: user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
-  const salt = await bcrypt.genSalt(10);
-  const hashedPwd = await bcrypt.hash(password, salt)
+  static async findAll(req: Request, res: Response, next: NextFunction) {
+    try {
+      const users = await UserService.findAll();
+      res.status(200).json({
+        message: "user get all",
+        data: users,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
-  const user = new User({
-    ...data,
-    password: hashedPwd
-  })
+  static async findById(req: Request, res: Response, next: NextFunction) {
+    const { id } = req.params;
+    try {
+      const user = await UserService.findById(id);
+      res.status(200).json({
+        message: "get user by id successfully",
+        data: user,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+}
 
-  await user.save();
-
-  res.status(201).json({
-    message: "user created",
-    data: {
-      ...user.toJSON(),
-      password: undefined
-    },
-  });
-
-};
-
-const getAllUser = async (req: Request, res: Response) => {
-  
-  const users = await User.find().select("-password");
-
-  res.status(201).json({
-    message: "get all users",
-    data: users,
-  });
-  
-};
-
-export { createUser, getAllUser };
+export default UserController;
